@@ -1,5 +1,6 @@
 obj/
 bin/
+.idea/
 
 # Created by https://www.toptal.com/developers/gitignore/api/csharp,visualstudio,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp,visualstudio,rider
