@@ -9,6 +9,7 @@
         /// <param name="b">数字2</param>
         /// <param name="op">操作</param>
         /// <returns>运算结果</returns>
+        /// <exception cref="FormatException">操作符异常</exception>
         public static decimal Calculate(decimal a, decimal b, string op)
         {
             switch (op)
@@ -22,7 +23,7 @@
                 case "/":
                     return a / b;
                 default:
-                    return 0;
+                    throw new FormatException("Invalid operation");
             }
         }
     }
@@ -34,7 +35,7 @@
         /// 处理输入
         /// </summary>
         /// <returns>(输入数字1，输入数字2，操作)</returns>
-        /// <exception cref="FormatException"></exception>
+        /// <exception cref="FormatException">输入异常</exception>
         static (decimal, decimal, string) ParseInput()
         {
             Console.WriteLine("Enter first number:");
@@ -66,7 +67,7 @@
             }
             catch (DivideByZeroException)
             {
-                Console.WriteLine("Division by zero");
+                Console.WriteLine("Divided by zero");
             }
         }
     }
