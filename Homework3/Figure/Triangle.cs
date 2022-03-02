@@ -8,58 +8,22 @@ namespace Figure
 {
     public class Triangle : Figure
     {
-        /// <summary>
-        /// 边1
-        /// </summary>
-        public double Side1 { get; set; }
-        /// <summary>
-        /// 边2
-        /// </summary>
-        public double Side2 { get; set; }
-        /// <summary>
-        /// 边3
-        /// </summary>
-        public double Side3 { get; set; }
+        static readonly string[] _IProps = new[] { "Side1", "Side2", "Side3" };
+        public Triangle() : base(_IProps) { }
 
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        /// <param name="side1">边1</param>
-        /// <param name="side2">边2</param>
-        /// <param name="side3">边3</param>
-        public Triangle(double side1, double side2, double side3)
-        {
-            Side1 = side1;
-            Side2 = side2;
-            Side3 = side3;
-        }
+        public Triangle(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        public Triangle() : this(0, 0, 0) { }
+        public Triangle(double[] props) : base(_IProps, props) { }
 
         public override bool CheckValid()
         {
-            return (Side1 + Side2 > Side3) && (Side1 + Side3 > Side2) && (Side2 + Side3 > Side1);
+            return base.CheckValid() && (Props["Side1"] + Props["Side2"] > Props["Side3"]) && (Props["Side1"] + Props["Side3"] > Props["Side2"]) && (Props["Side2"] + Props["Side3"] > Props["Side1"]);
         }
 
         protected override double CalcArea()
         {
-            double p = (Side1 + Side2 + Side3) / 2;
-            return Math.Sqrt(p * (p - Side1) * (p - Side2) * (p - Side3));
-        }
-
-        protected override void SetRandomValue()
-        {
-            Side1 = GetRandomDouble();
-            Side2 = GetRandomDouble();
-            Side3 = GetRandomDouble();
-        }
-
-        public override string ToString()
-        {
-            return $"[Triangle] Side1: {Side1} Side2: {Side2} Side3: {Side3}";
+            double p = (Props["Side1"] + Props["Side2"] + Props["Side3"]) / 2;
+            return Math.Sqrt(p * (p - Props["Side1"]) * (p - Props["Side2"]) * (p - Props["Side3"]));
         }
     }
 }

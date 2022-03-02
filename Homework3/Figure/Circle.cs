@@ -8,43 +8,16 @@ namespace Figure
 {
     public class Circle : Figure
     {
-        /// <summary>
-        /// 半径
-        /// </summary>
-        public double Radius { get; set; }
+        static readonly string[] _IProps = new[] { "Radius" };
+        public Circle() : base(_IProps) { }
 
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        /// <param name="radius">半径</param>
-        public Circle(double radius)
-        {
-            Radius = radius;
-        }
+        public Circle(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        public Circle() : this(0) { }
-
-        public override bool CheckValid()
-        {
-            return Radius > 0;
-        }
+        public Circle(double[] props) : base(_IProps, props) { }
 
         protected override double CalcArea()
         {
-            return Math.PI * Radius * Radius;
-        }
-
-        protected override void SetRandomValue()
-        {
-            Radius = GetRandomDouble();
-        }
-
-        public override string ToString()
-        {
-            return $"[Circle] Radius: {Radius}";
+            return Math.PI * Props["Radius"] * Props["Radius"];
         }
     }
 }

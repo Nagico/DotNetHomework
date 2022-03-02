@@ -15,9 +15,12 @@ namespace Figure
                 if (CheckValid())
                     return CalcArea();
                 else
-                    throw new InvalidOperationException("Invalid figure");
+                    throw new InvalidOperationException($"Invalid Figure: {FigureInfo}");
             }
         }
+        /// <summary>
+        /// 当前图形参数
+        /// </summary>
         public Dictionary<string, double> Props { get; set; }
         /// <summary>
         /// 派生类列表
@@ -32,11 +35,11 @@ namespace Figure
         /// <summary>
         /// 随机化参数最大值
         /// </summary>
-        protected readonly double _random_max = 100;
+        private readonly double _random_max = 100;
         /// <summary>
         /// 随机化参数最小值
         /// </summary>
-        protected readonly double _random_min = 10;
+        private readonly double _random_min = 10;
         /// <summary>
         /// 随机数发生器
         /// </summary>
@@ -44,41 +47,68 @@ namespace Figure
         /// <summary>
         /// 参数字段列表
         /// </summary>
-        private static readonly string[]? IProps;
-
-        public Figure()
+        private readonly string[] IProps;
+        /// <summary>
+        /// 当前图形信息
+        /// </summary>
+        private string FigureInfo
         {
-            if (IProps == null)
-                throw new NotImplementedException(nameof(IProps));
+            get
+            {
+                var className = this.GetType().Name;
+                List<string> propsValue = new();
+                foreach (var prop in Props)
+                {
+                    propsValue.Add($"{prop.Key}: {prop.Value}");
+                }
+                return $"[{className}] {string.Join(", ", propsValue)}";
+            }
+        }
+
+        /// <summary>
+        /// 默认初始化图形
+        /// </summary>
+        /// <param name="iProps">参数字段列表</param>
+        public Figure(string[] iProps)
+        {
+            IProps = iProps ?? throw new NotImplementedException(nameof(IProps));
             Props = new();
-            foreach(var prop in IProps)
+            foreach (var prop in IProps)
             {
                 Props.Add(prop, 0.0d);
             }
         }
 
-        public Figure(Dictionary<string, double> props)
+        /// <summary>
+        /// 使用字典初始化图形
+        /// </summary>
+        /// <param name="iProps">参数字段列表</param>
+        /// <param name="props">参数字典</param>
+        /// <exception cref="ArgumentException"></exception>
+        public Figure(string[] iProps, Dictionary<string, double> props)
         {
-            if (IProps == null)
-                throw new NotImplementedException(nameof(IProps));
+            IProps = iProps ?? throw new NotImplementedException(nameof(IProps));
             Props = new();
-
             var propsKey = props.Keys.ToList();
             var iPropsKey = IProps.ToList();
             if (propsKey.Count != iPropsKey.Count || propsKey.Count(t => !iPropsKey.Contains(t)) != 0)
-                throw new ArgumentException("Invalid props keys");
+                throw new ArgumentException("Invalid Props Keys");
 
             Props = props;
         }
 
-        public Figure(double[] props)
+        /// <summary>
+        /// 使用数组顺序初始化图形
+        /// </summary>
+        /// <param name="iProps">参数字段列表</param>
+        /// <param name="props">参数数组</param>
+        /// <exception cref="ArgumentException"></exception>
+        public Figure(string[] iProps, double[] props)
         {
-            if (IProps == null)
-                throw new NotImplementedException(nameof(IProps));
+            IProps = iProps ?? throw new NotImplementedException(nameof(IProps));
             Props = new();
-
             if (props.Length != IProps.Length)
-                throw new ArgumentException("Invalid props keys");
+                throw new ArgumentException("Invalid Props Number");
 
             for (var i = 0; i < props.Length; i++)
                 Props.Add(IProps[i], props[i]);
@@ -99,19 +129,38 @@ namespace Figure
         /// <returns>图形面积</returns>
         protected abstract double CalcArea();
 
-        public abstract bool CheckValid();
+        public virtual bool CheckValid()
+        {
+            foreach(var prop in Props.Values)
+            {
+                if (prop <= 0)
+                    return false;
+            }
+            return true;
+        }
 
         /// <summary>
-        /// 设定随机参数
+        /// 设置随机参数
         /// </summary>
-        protected abstract void SetRandomValue();
+        protected virtual void SetRandomProps()
+        {
+            foreach (var prop in Props.Keys)
+            {
+                Props[prop] = GetRandomDouble();
+            }
+        }
 
         public void Random()
         {
             while (!CheckValid())
             {
-                SetRandomValue();
+                SetRandomProps();
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{FigureInfo}, Area: {Area}";
         }
 
     }

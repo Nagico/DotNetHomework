@@ -8,31 +8,21 @@ namespace Figure
 {
     public class Square : Rectangle
     {
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        /// <param name="length">边长</param>
-        public Square(double length = 0) : base(length, length) { }
+        public Square() : base() { }
 
-        /// <summary>
-        /// 初始化生成
-        /// </summary>
-        public Square() : this(0) { }
+        public Square(Dictionary<string, double> props) : base(props) { }
+
+        public Square(double[] props) : base(props) { }
 
         public override bool CheckValid()
         {
-            return base.CheckValid() && (Length == Width);
+            return base.CheckValid() && (Props["Length"] == Props["Width"]);
         }
 
-        protected override void SetRandomValue()
+        protected override void SetRandomProps()
         {
-            Length = GetRandomDouble();
-            Width = Length;
-        }
-
-        public override string ToString()
-        {
-            return $"[Square] Length: {Length}";
+            Props["Length"] = GetRandomDouble();
+            Props["Width"] = Props["Length"];
         }
     }
 }
