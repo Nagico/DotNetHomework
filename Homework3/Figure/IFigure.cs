@@ -19,10 +19,5 @@ namespace Figure
         /// </summary>
         /// <returns>检查结果</returns>
         bool CheckValid();
-
-        /// <summary>
-        /// 随机化图形参数
-        /// </summary>
-        void Random();
     }
 }

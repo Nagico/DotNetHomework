@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Figure
 {
-    public abstract class Figure : IFigure
+    public abstract class Figure : IFigure, IRandom
     {
         public double Area
         {
@@ -40,10 +40,6 @@ namespace Figure
         /// 随机化参数最小值
         /// </summary>
         private readonly double _random_min = 10;
-        /// <summary>
-        /// 随机数发生器
-        /// </summary>
-        private Random _random = new();
         /// <summary>
         /// 参数字段列表
         /// </summary>
@@ -120,6 +116,7 @@ namespace Figure
         /// <returns>随机结果</returns>
         protected double GetRandomDouble()
         {
+            Random _random = new();
             return _random.NextDouble() * (_random_max - _random_min) + _random_min;
         }
 
