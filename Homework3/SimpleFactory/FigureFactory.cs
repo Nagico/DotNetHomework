@@ -19,16 +19,22 @@ namespace Figure
         /// <returns>对象</returns>
         /// <exception cref="ArgumentException">参数错误</exception>
         /// <exception cref="NullReferenceException">创建失败</exception>
-        public static dynamic CreateFigure(Type? type, object[]? args = null)
+        public static Figure CreateFigure(Type? type, params double[]? args)
         {
             if (type == null)
                 throw new ArgumentException("Invalid classname");
 
-            dynamic obj = Activator.CreateInstance(type, args) as Figure;
+            if (args == null || args.Length == 0)
+            {
+                var _IProps = type.GetField("_IProps") ?? throw new NotImplementedException();
 
-            if (obj == null)
+                var iProps = (IEnumerable<string>)(_IProps.GetValue(null) ?? throw new NotImplementedException());
+                args = RandomShape.GetRandomProps(iProps.Count()).Cast<double>().ToArray();
+            }
+
+
+            if (Activator.CreateInstance(type, args) is not Figure obj)
                 throw new NullReferenceException("Create failed");
-            obj = Convert.ChangeType(obj, type);
 
             return obj;
         }
@@ -41,7 +47,7 @@ namespace Figure
         /// <returns>对象</returns>
         /// <exception cref="ArgumentException">参数错误</exception>
         /// <exception cref="NullReferenceException">创建失败</exception>
-        public static dynamic CreateFigure(string type, object[]? args = null)
+        public static Figure CreateFigure(string type, params double[]? args)
         {
             return CreateFigure(Type.GetType($"Figure.{type}, Figure"), args);
         }

@@ -8,12 +8,11 @@ namespace Figure
 {
     public class Circle : Figure
     {
-        static readonly string[] _IProps = new[] { "Radius" };
-        public Circle() : base(_IProps) { }
+        public static readonly string[] _IProps = new[] { "Radius" };
 
         public Circle(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        public Circle(double[] props) : base(_IProps, props) { }
+        public Circle(params double[] props) : base(_IProps, props) { }
 
         protected override double CalcArea()
         {

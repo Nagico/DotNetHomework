@@ -6,23 +6,19 @@ using System.Threading.Tasks;
 
 namespace Figure
 {
-    public class Square : Rectangle
+    public class Square : Figure
     {
-        public Square() : base() { }
+        public static readonly string[] _IProps = new[] { "Side" };
 
-        public Square(Dictionary<string, double> props) : base(props) { }
+        public Square(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        public Square(double[] props) : base(props) { }
+        public Square(params double[] props) : base(_IProps, props) { }
 
-        public override bool CheckValid()
+        protected override double CalcArea()
         {
-            return base.CheckValid() && (Props["Length"] == Props["Width"]);
+            return Props["Side"] * Props["Side"];
         }
 
-        protected override void SetRandomProps()
-        {
-            Props["Length"] = GetRandomDouble();
-            Props["Width"] = Props["Length"];
-        }
+
     }
 }

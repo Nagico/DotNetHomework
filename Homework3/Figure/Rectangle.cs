@@ -8,12 +8,11 @@ namespace Figure
 {
     public class Rectangle : Figure
     {
-        static readonly string[] _IProps = new[] { "Length", "Width" };
-        public Rectangle() : base(_IProps) { }
+        public static readonly string[] _IProps = new[] { "Length", "Width" };
 
         public Rectangle(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        public Rectangle(double[] props) : base(_IProps, props) { }
+        public Rectangle(params double[] props) : base(_IProps, props) { }
 
         protected override double CalcArea()
         {

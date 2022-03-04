@@ -8,12 +8,11 @@ namespace Figure
 {
     public class Triangle : Figure
     {
-        static readonly string[] _IProps = new[] { "Side1", "Side2", "Side3" };
-        public Triangle() : base(_IProps) { }
+        public static readonly string[] _IProps = new[] { "Side1", "Side2", "Side3" };
 
         public Triangle(Dictionary<string, double> props) : base(_IProps, props) { }
 
-        public Triangle(double[] props) : base(_IProps, props) { }
+        public Triangle(params double[] props) : base(_IProps, props) { }
 
         public override bool CheckValid()
         {
