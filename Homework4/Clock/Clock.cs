@@ -53,6 +53,8 @@ namespace Clock
             AlarmTime = DateTime.MinValue;
             ClockStatus = false;
             AlarmStatus = false;
+            OnTick = ((c, a) => { });
+            OnAlarm = ((c, a) => { });
         }
 
         /// <summary>
