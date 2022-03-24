@@ -26,7 +26,6 @@ catch (Exception ex)
 }
 
 // 添加商品
-
 Console.WriteLine(productService.Add(new Product("Apple", 2.0)));
 Console.WriteLine(productService.Add(new Product("Banana", 3.5)));
 Console.WriteLine(productService.Add(new Product("Cherry", 4.25)));

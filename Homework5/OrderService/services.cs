@@ -6,88 +6,138 @@ using System.Threading.Tasks;
 
 namespace OrderService
 {
-    public class CustomerService
+    /// <summary>
+    /// 模型业务基类
+    /// </summary>
+    /// <typeparam name="T">模型类</typeparam>
+    public class Service<T> : IEnumerable<T> where T : Model
     {
-        private List<Customer> customers = new();
-        
-        public Customer Add(Customer customer)
+        protected List<T> models = new();
+
+        /// <summary>
+        /// 添加实例
+        /// </summary>
+        /// <param name="model">实例对象</param>
+        /// <returns>实例对象</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public T Add(T model)
         {
-            if (customers.Contains(customer))
-                throw new ArgumentException($"Customer{customer.Id} {customer.Name} already exists.");
-            customers.Add(customer);
-            return customer;
+            if (models.Contains(model))
+                throw new ArgumentException($"{typeof(T).Name}{model.Id} already exists.");
+            models.Add(model);
+            return model;
         }
 
-        public void Delete(Customer customer)
+        /// <summary>
+        /// 删除实例
+        /// </summary>
+        /// <param name="model">实例对象</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void Delete(T model)
         {
-            if (!customers.Contains(customer))
-                throw new ArgumentException($"Customer{customer.Id} {customer.Name} not exists.");
-            customers.Remove(customer);
+            if (!models.Contains(model))
+                throw new ArgumentException($"Model{model.Id} not exists.");
+            models.Remove(model);
         }
 
+        /// <summary>
+        /// 获取实例
+        /// </summary>
+        /// <param name="id">实例ID</param>
+        /// <returns>实例对象</returns>
+        public T? Get(int id)
+        {
+            return models.Where(X => X.Id == id).FirstOrDefault();
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (var model in models)
+            {
+                yield return model;
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            foreach (var model in models)
+            {
+                yield return model;
+            }
+        }
+
+        /// <summary>
+        /// 遍历
+        /// </summary>
+        /// <param name="action">函数</param>
+        public void ForEach(Action<T> action)
+        {
+            foreach (var item in this)
+            {
+                action(item);
+            }
+        }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="func">排序函数</param>
+        public void Sort(Func<T, T, int>? func = null)
+        {
+            if (func == null)
+                func = (o1, o2) => o1.Id - o2.Id;
+            models.Sort((o1, o2) => func(o1, o2));
+        }
+    }
+
+    /// <summary>
+    /// 顾客业务类
+    /// </summary>
+    public class CustomerService : Service<Customer>
+    {
+        /// <summary>
+        /// 获取顾客查询集
+        /// </summary>
+        /// <param name="name">顾客姓名</param>
+        /// <returns>顾客查询集</returns>
         public IEnumerable<Customer> Query(string name)
         {
-            return customers.Where(x => x.Name == name);
+            return models.Where(x => x.Name == name);
         }
 
-        public Customer? Get(int id)
-        {
-            return customers.Where(X => X.Id == id).FirstOrDefault();
-        }
     }
 
-    public class ProductService
+    /// <summary>
+    /// 产品业务类
+    /// </summary>
+    public class ProductService : Service<Product>
     {
-        private List<Product> products = new();
-
-        public Product Add(Product product)
-        {
-            if (products.Contains(product))
-                throw new ArgumentException($"Product{product.Id} {product.Name} already exists.");
-            products.Add(product);
-            return product;
-        }
-
-        public void Delete(Product product)
-        {
-            if (!products.Contains(product))
-                throw new ArgumentException($"Product{product.Id} {product.Name} not exists.");
-            products.Remove(product);
-        }
-
+        /// <summary>
+        /// 获取产品查询集
+        /// </summary>
+        /// <param name="name">产品名称</param>
+        /// <returns>产品查询集</returns>
         public IEnumerable<Product> Query(string name)
         {
-            return products.Where(x => x.Name == name);
-        }
-
-        public Product? Get(int id)
-        {
-            return products.Where(x => x.Id == id).FirstOrDefault();
+            return models.Where(x => x.Name == name);
         }
     }
 
-    public class OrderService : IEnumerable<Order>
+    /// <summary>
+    /// 订单业务类
+    /// </summary>
+    public class OrderService : Service<Order>
     {
-        private List<Order> orders = new();
-
-        public Order Add(Order order)
+        /// <summary>
+        /// 获取订单查询集
+        /// </summary>
+        /// <param name="productName">产品名称</param>
+        /// <param name="customer">顾客姓名</param>
+        /// <param name="totalPrice">总价</param>
+        /// <returns>订单查询集</returns>
+        public IEnumerable<Order> Query(string? productName = null, Customer? customer = null, double? totalPrice = null)
         {
-            if (orders.Contains(order))
-                throw new ArgumentException($"Order{order.Id} already exists.");
-            orders.Add(order);
-            return order;
-        }
-
-        public void Delete(Order order)
-        {
-            if (!orders.Contains(order))
-                throw new ArgumentException($"Order{order.Id} not exists.");
-            orders.Remove(order);
-        }
-
-        public IEnumerable<Order> Query(string? productName=null, Customer? customer=null, double? totalPrice=null)
-        {
-            var result = orders.AsEnumerable();
+            var result = models.AsEnumerable();
 
             if (customer != null)
                 result = result.Where(order => order.Customer.Equals(customer));
@@ -99,42 +149,6 @@ namespace OrderService
                 result = result.Where(order => order.Details.Any(detail => detail.Product.Name == productName));
 
             return result;
-        }
-
-        public Order? Get(int id)
-        {
-            return orders.Where(order => order.Id == id).FirstOrDefault();
-        }
-
-        public void Sort(Func<Order, Order, int>? func=null)
-        {
-            if (func == null)
-                func = (o1, o2) => o1.Id - o2.Id;
-            orders.Sort((o1, o2) => func(o1,o2));
-        }
-
-        public IEnumerator<Order> GetEnumerator()
-        {
-            foreach(var order in orders)
-            {
-                yield return order;
-            }
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            foreach (var order in orders)
-            {
-                yield return order;
-            }
-        }
-
-        public void ForEach(Action<Order> action)
-        {
-            foreach (var item in this)
-            {
-                action(item);
-            }
         }
     }
 }

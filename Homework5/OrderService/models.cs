@@ -6,10 +6,45 @@ using System.Threading.Tasks;
 
 namespace OrderService
 {
-    public class Customer : IEquatable<Customer?>
+    /// <summary>
+    /// 模型基类
+    /// </summary>
+    public class Model : IEquatable<Model?>
+    {
+        /// <summary>
+        /// pk主键
+        /// </summary>
+        public int Id { get; set; }
+
+        public Model()
+        {
+            Id = 0;
+        }
+
+        public bool Equals(Model? other)
+        {
+            return other != null &&
+                   Id == other.Id;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Model);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
+
+    }
+
+    /// <summary>
+    /// 顾客模型类
+    /// </summary>
+    public class Customer : Model
     {
         private static int totalId = 0;
-        public int Id { get; set; }
         public string Name { get; set; }
 
         public DateTime CreateTime { get; set; }
@@ -21,32 +56,15 @@ namespace OrderService
             CreateTime = DateTime.Now;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as Customer);
-        }
-
-        public bool Equals(Customer? other)
-        {
-            return other != null &&
-                   Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
-
         public override string? ToString()
         {
             return $"[Customer {Id}]: {Name}";
         }
     }
 
-    public class Product : IEquatable<Product?>
+    public class Product : Model
     {
         private static int totalId = 0;
-        public int Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public DateTime CreateTime { get; set; }
@@ -59,30 +77,18 @@ namespace OrderService
             CreateTime = DateTime.Now;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as Product);
-        }
-
-        public bool Equals(Product? other)
-        {
-            return other != null &&
-                   Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
-
         public override string? ToString()
         {
             return $"[Product {Id}]: {Name}-{Price}";
         }
     }
 
-    public class OrderDetail : IEquatable<OrderDetail?>
+    /// <summary>
+    /// 订单详情模型类
+    /// </summary>
+    public class OrderDetail : Model
     {
+        private static int totalId = 0;
         public Product Product { get; set; }
         public int Number { get; set; }
         public double Discount { get; set; }
@@ -96,6 +102,7 @@ namespace OrderService
 
         public OrderDetail(Product product, int number, double discount)
         {
+            Id = ++totalId;
             Product = product;
             Number = number;
             Discount = discount;
@@ -103,7 +110,7 @@ namespace OrderService
 
         public override string ToString()
         {
-            return 
+            return
                 $"Product: {Product} \t" +
                 $"Number: {Number} \t" +
                 $"Discount: {Discount} \t" +
@@ -127,11 +134,12 @@ namespace OrderService
         }
     }
 
-    public class Order : IEquatable<Order?>
+    /// <summary>
+    /// 订单模型类
+    /// </summary>
+    public class Order : Model
     {
         private static int totalId = 0;
-        public int Id { get; set; }
-
         public Customer Customer { get; set; }
         public List<OrderDetail> Details { get; set; }
         public double TotalPrice
@@ -151,22 +159,6 @@ namespace OrderService
             CreateTime = DateTime.Now;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as Order);
-        }
-
-        public bool Equals(Order? other)
-        {
-            return other != null &&
-                   Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
-
         public override string ToString()
         {
             StringBuilder details = new();
@@ -174,7 +166,7 @@ namespace OrderService
             {
                 details.AppendLine(detail.ToString());
             }
-            return 
+            return
                 $"[Order {Id}] \n\n" +
                 $"{Customer} \n\n" +
                 $"[Order Details]\n" +
@@ -184,7 +176,7 @@ namespace OrderService
 
         public OrderDetail? GetOrderDetail(Product product)
         {
-            return Details.Where(x=>x.Product.Equals(product)).FirstOrDefault();
+            return Details.Where(x => x.Product.Equals(product)).FirstOrDefault();
         }
 
         public OrderDetail AddOrderDetail(OrderDetail? orderDetail)
