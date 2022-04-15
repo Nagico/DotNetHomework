@@ -92,6 +92,9 @@ namespace OrderServiceWinForms
                 labelResultCount.Text = $"共 {bindingSourceOrder.Count} 项";
                 buttonDelete.Enabled = bindingSourceOrder.Count > 0;
                 buttonUpdate.Enabled = bindingSourceOrder.Count > 0;
+
+                // 强制刷新
+                // bindingSourceOrder.ResetBindings(false);
             }
             catch (Exception ex)
             {
@@ -131,6 +134,7 @@ namespace OrderServiceWinForms
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             var item = bindingSourceOrder.Current as Order ?? throw new Exception("Unkown Order");
+            // 确认操作
             orderService.Delete(item);
             refreshQuery();
             MessageBox.Show("删除成功", "订单");
@@ -244,9 +248,7 @@ namespace OrderServiceWinForms
             openFileDialog.Filter = "XML|*.xml;";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                var file = openFileDialog.FileName;
-                if (file == null)
-                    throw new Exception("未知文件");
+                var file = openFileDialog.FileName ?? throw new Exception("未知文件"); ;
 
                 (var cnt, var suc) = orderService.Import(file);
                 refreshQuery();

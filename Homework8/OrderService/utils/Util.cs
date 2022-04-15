@@ -17,7 +17,7 @@ namespace OrderSystem.utils
                 XmlSerializer xml = new XmlSerializer(typeof(T));
                 xml.Serialize(ms, obj);
                 ms.Seek(0, SeekOrigin.Begin);
-                retval = xml.Deserialize(ms);
+                retval = xml.Deserialize(ms) ?? throw new Exception("Xml Serializer Failed.");
                 ms.Close();
             }
             return (T)retval;
