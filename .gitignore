@@ -666,3 +666,5 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp,visualstudio,rider
 Homework11/OrderSystem/appsettings.json
+Homework12n/OrderSystem/appsettings.json
+Homework12n/OrderSystem/appsettings.Development.json
